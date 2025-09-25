@@ -8,7 +8,6 @@ const path = require("path"); // <-- add this
 const Chat = require("./models/Chat");
 const User = require("./models/User");
 const notificationsRoute = require("./routes/notifications");
-
 dotenv.config();
 connectDB();
 
