@@ -4,31 +4,36 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
-const path = require("path"); // <-- add this
+const path = require("path");
 const Chat = require("./models/Chat");
 const User = require("./models/User");
 const notificationsRoute = require("./routes/notifications");
+
 dotenv.config();
 connectDB();
 
 const app = express();
 const server = http.createServer(app);
 
-//  Set Socket.IO
+// Socket.IO setup
 const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
   },
 });
-app.set("io", io); // make io available in routes if needed
+app.set("io", io); // make io available in routes
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve React frontend
-app.use(express.static(path.join(__dirname, "../teamsync-frontend/dist"))); // <-- point to build folder
+// Serve React frontend from server/frontend
+app.use(express.static(path.join(__dirname, "frontend")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/index.html"));
+});
 
 // API routes
 app.use("/api/auth", require("./routes/authRoutes"));
@@ -41,18 +46,13 @@ app.use("/api/comments", require("./routes/commentRoutes"));
 app.use("/api/notifications", notificationsRoute);
 app.use("/api/analytics", require("./routes/analytics"));
 
-// Catch-all route to serve frontend
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../teamsync-frontend/dist/index.html"));
-});
-
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Server Error" });
 });
 
-// Socket.IO Chat handling
+// Socket.IO chat handling
 io.on("connection", (socket) => {
   console.log("⚡ User connected:", socket.id);
 

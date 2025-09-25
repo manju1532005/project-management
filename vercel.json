@@ -1,16 +1,12 @@
 {
-  "version": 3,
+  "version": 2,
   "builds": [
     {
-      "src": "server/package.json",
-      "use": "@vercel/node",
-      "config": { "zeroConfig": true }
+      "src": "server/app.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server/app.js"
-    }
+    { "src": "/(.*)", "dest": "server/app.js" }
   ]
 }
