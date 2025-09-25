@@ -26,6 +26,9 @@ app.set("io", io); // make io available in routes if needed
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
